@@ -1,0 +1,15 @@
+imax *
+jmax *
+kmax *
+---------------
+shapes * leptoQ result.root $PROCESS
+---------------
+bin leptoQ
+observation 50472443
+------------------------------
+bin     leptoQ    leptoQ
+process cmutau    background    
+process 0         1       
+rate    406.6     50472443 
+--------------------------------
+all lnN 1.3 1.3

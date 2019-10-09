@@ -19,6 +19,7 @@ source job_merge.sh
 MVA
 ```{.Bash}
 cd mva/mkNtuple
+head -1 ../../analyzer/file_list.txt | xargs -i -P$(nproc) -n2 python launchAna.py
 cat ../../analyzer/file_list.txt | xargs -i -P$(nproc) -n2 python launchAna.py
 cd ..
 python training_bdt.py cmutau 1 2 1 1 01
@@ -43,3 +44,9 @@ make -j4
 #How to run
 path_to_/plotIt/plotIt -o plots/ path_to_/plotIt/configs/config.yml -y
 ``
+
+Significance (needs CMSSW)
+```{.Bash}
+cd somewhere/in/cmssw; cmsenv; cd -
+combine -M Significance datacard.txt -t -1 --expectSignal=1
+```

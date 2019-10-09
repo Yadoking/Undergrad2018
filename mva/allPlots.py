@@ -21,7 +21,6 @@ def AddBkg(fname, name, color, xsection):
  
   tmp["file"] = f
   tmp["hname"] = [x.GetName() for x in f.GetListOfKeys()]
-  print(tmp)
   if xsection is not 1:
     tmp["hname"].remove("EventInfo")
 #    tmp["hname"].remove("tree")
@@ -108,6 +107,8 @@ N_bkgsamples = len(bkgsamples)
 N_hist = len(sig1samples[sig1samples.keys()[0]]["hname"])
 
 fNevt = open("Nevt.txt",'w')
+fout = TFile.Open('result.root','RECREATE')
+h_background = TH1F('background','background',40,-1,1)
 
 for i in range(0, N_hist):
 
@@ -141,6 +142,10 @@ for i in range(0, N_hist):
     #print fname
     #print scale
     h_tmp.Scale(scale)
+    h_tmp.SetName('h_tmp')
+    if h_background.Integral() < 1.0:
+      h_background = h_tmp.Clone('background')
+    else: h_background.Add(h_tmp, 1.0)
 
     ## check if the sample is the same as previous process. 
     if k < N_bkgsamples-1 :
@@ -181,6 +186,9 @@ for i in range(0, N_hist):
     #print scale
     h_sig1.Scale(scale)
     l.AddEntry(h_sig1, sig1samples[fname]["name"]  ,"F")
+    fout.cd()
+    h_sig1.SetName('cmutau')
+    h_sig1.Write()
 
     ## print out number of events
     numevt = h_sig1.Integral()
@@ -209,6 +217,9 @@ for i in range(0, N_hist):
     #print scale
     h_sig2.Scale(scale)
     l.AddEntry(h_sig2, sig2samples[fname]["name"]  ,"F")
+    fout.cd()
+    h_sig2.SetName('ctautau')
+    h_sig2.Write()
 
     ## print out number of events
     numevt = h_sig2.Integral()
@@ -236,6 +247,9 @@ for i in range(0, N_hist):
     #print scale
     h_sig3.Scale(scale)
     l.AddEntry(h_sig3, sig3samples[fname]["name"]  ,"F")
+    fout.cd()
+    h_sig3.SetName('cnunu')
+    h_sig3.Write()
 
     ## print out number of events
     numevt = h_sig3.Integral()
@@ -325,3 +339,12 @@ for i in range(0, N_hist):
   else:
     c.Print(filename)
 
+fout.Write()
+data_obs = fout.Get('background')
+data_obs.SetName('data_obs')
+data_obs.Write()
+fout.Write()
+print "background: ", fout.Get('background').Integral()
+print "cmutau: ",     fout.Get('cmutau').Integral()
+print "ctautau: ",    fout.Get('ctautau').Integral()
+print "cnunu: ",      fout.Get('cnunu').Integral()
