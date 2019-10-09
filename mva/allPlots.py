@@ -142,6 +142,7 @@ for i in range(0, N_hist):
     #print fname
     #print scale
     h_tmp.Scale(scale)
+    h_tmp.Rebin(2)
     h_tmp.SetName('h_tmp')
     if h_background.Integral() < 1.0:
       h_background = h_tmp.Clone('background')
@@ -171,7 +172,7 @@ for i in range(0, N_hist):
 
   h_bkg = hs.GetStack().Last()
 
-
+  nsig1 = 0; nsig2 = 0; nsig1 = 0;
   #Signal
   m = 0
   for fname in sig1samples.keys():
@@ -185,6 +186,7 @@ for i in range(0, N_hist):
     #print fname
     #print scale
     h_sig1.Scale(scale)
+    h_sig1.Rebin(2)
     l.AddEntry(h_sig1, sig1samples[fname]["name"]  ,"F")
     fout.cd()
     h_sig1.SetName('cmutau')
@@ -216,6 +218,7 @@ for i in range(0, N_hist):
     #print fname
     #print scale
     h_sig2.Scale(scale)
+    h_sig2.Rebin(2)
     l.AddEntry(h_sig2, sig2samples[fname]["name"]  ,"F")
     fout.cd()
     h_sig2.SetName('ctautau')
@@ -246,6 +249,7 @@ for i in range(0, N_hist):
     #print fname
     #print scale
     h_sig3.Scale(scale)
+    h_sig3.Rebin(2)
     l.AddEntry(h_sig3, sig3samples[fname]["name"]  ,"F")
     fout.cd()
     h_sig3.SetName('cnunu')
@@ -281,7 +285,7 @@ for i in range(0, N_hist):
   if log and h_bkg.Integral() > 0:
     c.SetLogy()
 
-  max_hs = hs.GetMaximum()
+  max_hs = max([hs.GetMaximum(), h_sig1.GetMaximum(), h_sig2.GetMaximum(), h_sig3.GetMaximum()])
   maxfrac = 0.5
   if log :
     if max_hs > 100000:
