@@ -23,7 +23,7 @@ with open("Nevt.txt") as fp:
       sig = []
 
 for items in merge:
-  if items[0] in ['Ch0', 'Ch1', 'Ch3', 'Ch4', 'Ch5']: continue
+  if items[0] in ['Ch0', 'Ch1', 'Ch3', 'Ch4', 'Ch5', 'Ch8']: continue
   if math.isnan(items[2]) or math.isnan(items[3]) or math.isnan(items[4]): continue
   merge2.append(items)
 

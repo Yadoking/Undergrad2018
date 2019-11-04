@@ -34,6 +34,9 @@ void tauAnalyzer::Loop(const std::string outFileName)
   TH1F* h_jetptsum[11][83];
   TH1F* h_smTop[11][83];
   TH1F* h_sigTop[11][83];
+  TH1F* h_leptau_dphi[11][83];
+  TH1F* h_lep1_met_dr[11][83];
+  TH1F* h_tau1_met_dr[11][83];
 
   for(int ch=0; ch < nCh; ch++){
     for(int i=0; i < nCuts; i++){
@@ -49,6 +52,9 @@ void tauAnalyzer::Loop(const std::string outFileName)
       h_jetptsum[ch][i] = new TH1F(Form("h_jetPtsum_Ch%i_S%i",ch,i), ";H_{T} (GeV)",40,0,1000);
       h_smTop[ch][i] = new TH1F(Form("h_smTop_Ch%i_S%i",ch,i), ";SM Top Mass (GeV)",40,0,300);
       h_sigTop[ch][i] = new TH1F(Form("h_sigTop_Ch%i_S%i",ch,i), ";Signal Top Mass (GeV)",40,0,300);
+			h_leptau_dphi[ch][i] = new TH1F(Form("h_leptau_dphi%i_S%i",ch,i), ";#Delta phi_{#tau l}", 40, 0, 4);
+			h_lep1_met_dr[ch][i] = new TH1F(Form("h_lep1_met_dr%i_S%i",ch,i), ";#Delta R_{l met}", 40, 0, 4);
+			h_tau1_met_dr[ch][i] = new TH1F(Form("h_tau1_met_dr%i_S%i",ch,i), ";#Delta R_{#tau met}", 40, 0, 4);
 
       h_tauTag_matched[ch][i]->Sumw2();
       h_jets_n[ch][i]->Sumw2();
@@ -61,6 +67,9 @@ void tauAnalyzer::Loop(const std::string outFileName)
       h_jetptsum[ch][i]->Sumw2();
       h_smTop[ch][i]->Sumw2();
       h_sigTop[ch][i]->Sumw2();
+      h_leptau_dphi[ch][i]->Sumw2();
+      h_lep1_met_dr[ch][i]->Sumw2();
+      h_tau1_met_dr[ch][i]->Sumw2();
     }
   }
 
@@ -90,9 +99,9 @@ void tauAnalyzer::Loop(const std::string outFileName)
         GoodMuIdx.push_back(i);
     }
     for(int i = 0; i < nElectron; i++){
-      if(GoodElecIdx.size() == 0 && Electron_pt[i] > 35 && std::abs(Electron_eta[i]) < 2.4 && Electron_relIso[i] < 0.25)
+      if(GoodElecIdx.size() == 0 && Electron_pt[i] > 30 && std::abs(Electron_eta[i]) < 2.4 && Electron_relIso[i] < 0.25)
         GoodElecIdx.push_back(i);
-      else if(GoodElecIdx.size() > 0 && Electron_pt[i] > 30 && std::abs(Electron_eta[i]) < 2.4 && Electron_relIso[i] < 0.25)
+      else if(GoodElecIdx.size() > 0 && Electron_pt[i] > 25 && std::abs(Electron_eta[i]) < 2.4 && Electron_relIso[i] < 0.25)
         GoodElecIdx.push_back(i);
     }
 
@@ -291,6 +300,11 @@ void tauAnalyzer::Loop(const std::string outFileName)
           if( nGoodMuon + nGoodElectron > 1  ) h_lepDR[MODE][cut]->Fill(lepton[0].DeltaR(lepton[1]));
           if( tauIdx.size() > 0 && nGoodMuon > 0 ){
             float leptaudR = lepton[0].DeltaR(tauJet[0]);
+						float leptau_dphi = lepton[0].DeltaPhi(tauJet[0]);
+						h_leptau_dphi[MODE][cut]->Fill(leptau_dphi);
+						h_lep1_met_dr[MODE][cut]->Fill(lepton[0].DeltaR(met));
+						h_tau1_met_dr[MODE][cut]->Fill(tauJet[0].DeltaR(met));
+
             if( leptaudR < 2.2 ) continue;
             h_leptau_DR[MODE][cut]->Fill(leptaudR);
           }
@@ -313,7 +327,7 @@ void tauAnalyzer::Loop(const std::string outFileName)
 
   for(int ch=0; ch < nCh; ch++){
     for(int i = 0; i < nCuts-1; i++){
-      if( ch == 0 || ch == 1 || ch == 3 || ch == 4 || ch == 5 || ch == 7 || ch == 8) continue; 
+      if( ch == 0 || ch == 1 || ch == 3 || ch == 4 || ch == 5 || ch == 7) continue; 
       h_jets_n[ch][i]->Write();
       //h_bJets_n[ch][i]->Write();
       //h_cJets_n[ch][i]->Write();
@@ -326,6 +340,9 @@ void tauAnalyzer::Loop(const std::string outFileName)
       //h_jetptsum[ch][i]->Write();
       //h_smTop[ch][i]->Write();
       h_sigTop[ch][i]->Write();
+			h_leptau_dphi[ch][i]->Write();
+			h_lep1_met_dr[ch][i]->Write();
+			h_tau1_met_dr[ch][i]->Write();
     }
   }
   EventInfo->Write();

@@ -21,6 +21,7 @@ def AddBkg(fname, name, color, xsection):
  
   tmp["file"] = f
   tmp["hname"] = [x.GetName() for x in f.GetListOfKeys()]
+  print(tmp)
   if xsection is not 1:
     tmp["hname"].remove("EventInfo")
     tmp["hname"].remove("tree")
@@ -110,9 +111,9 @@ fNevt = open("Nevt.txt",'w')
 
 for i in range(0, N_hist):
 
-  #printHistName = "nJets"
+  printHistName = "nJets"
   #printHistName = "sigTop"
-  printHistName = "leptauDR"
+  #printHistName = "leptauDR"
 
   hnames = sig1samples[sig1samples.keys()[0]]["hname"][i].split("_")
   if hnames[1] == printHistName :
