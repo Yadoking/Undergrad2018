@@ -4,6 +4,7 @@ from ROOT import *
 import ROOT
 from array import array
 import numpy as np
+from train_files import train_files
 gROOT.SetBatch(True)
 gROOT.ProcessLine("gErrorIgnoreLevel = kFatal;")
 
@@ -29,6 +30,13 @@ if not os.path.exists(os.path.join(configDir, histDir)):
   try: os.makedirs(os.path.join(configDir, histDir))
   except: pass
 
+_, bkg = train_files(ch)
+sig = []
+for tmp_ch in ['cmutau', 'ctautau', 'cnunu']:
+  for i in xrange(1,6):
+    sig.append('hist_LQ' + tmp_ch + 'LO_00' + str(i) + '.root')
+total = sig + bkg
+
 score_file_list = []
 hist_file_list = []
 event_file_list = []
@@ -38,18 +46,20 @@ with open(source) as fp:
     event_file = line.split(' ')[1]
     event_file = event_file.replace("./output", "../analyzer/output")
     event_file = event_file.rstrip('\n')
+    if any( event_file.split('/')[3] in t for t in total): continue
+    event_file_list.append(event_file)
 
     score_file = event_file.replace("../analyzer/output/hist", "score")
     score_file = score_file.rstrip('\n')
     score_file_list.append(score_file)
-    print score_file
 
     hist_file = score_file.replace("score", "hist")
     hist_file_list.append(hist_file)
 
+
 for i in range(len(score_file_list)):
   fscore = TFile.Open(os.path.join(scoreDir, score_file_list[i]))
-  fevt = TFile.Open(event_file)
+  fevt = TFile.Open(event_file_list[i])
   fout = TFile.Open(os.path.join(histDir, hist_file_list[i]), "RECREATE")
 
   tree = fscore.Get("tree")

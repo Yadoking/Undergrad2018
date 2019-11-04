@@ -25,8 +25,18 @@ train_size = 0.8
 nevt = {}
 nevt['l1_j3_b0_tau1'] = {'cmutau' : str(int(33178*train_size)), 'ctautau' : str(int(14266*train_size)),
 'cnunu' : str(int(790*train_size)), 'bkg' : str(int(48240*train_size))}
+
 nevt['l1_j2_b1_tau0'] = {'cmutau' : str(int(62848*train_size)), 'ctautau' : str(int(23580*train_size)),
 'cnunu' : str(int(12248*train_size)), 'bkg' : str(int(326226*train_size))}
+
+# With W+jets
+nevt['l1_j2_b1_tau0'] = {'cmutau' : str(int(62848*train_size)), 'ctautau' : str(int(23580*train_size)),
+'cnunu' : str(int(12248*train_size)), 'bkg' : str(int(327152*train_size))}
+
+nevt['l1_j3_b1_tau1'] = {'cmutau' : str(int(18958*train_size)), 'ctautau' : str(int(8104*train_size)),
+'cnunu' : str((int(490)*train_size)), 'bkg' : str(int(36898*train_size))}
+nevt['l1_j3_b2_tau1'] = {'cmutau' : str(int(3258*train_size)), 'ctautau' : str(int(1304*train_size)),
+'cnunu' : str(int(96*train_size)), 'bkg' : str(int(14548*train_size))}
 
 sel = 'l' + str(lep) + '_j' + str(jet) + '_b' + str(bjet) + '_tau' + str(taujet)
 
@@ -66,16 +76,20 @@ float_vars = ['lepton1_pt', 'lepton2_pt', 'met_pt', 'tau1_pt', 'tau2_pt',
               'jet_ht', 'jetlepmet_ht',
               'lep1met_pt', 'lep1tau1_pt', 'tau1tau2_pt', 'tau1_tau2_dr',
               'lep1_lep2_dr', 'tau1_lep1_dr', 'lep1_met_dphi', 'tau1_met_dphi',
-              'tau1lep1_met_dphi', 'lep1_b1_dr']
+              'tau1lep1_met_dphi', 'lep1_b1_dr', 'tau1_lep1_dphi',
+              'lep1b1_pt_sum', 'lep1b1_sum_pt', 'lepb1_pt_sum', 'jet_pt_sum', 'jet_sum_pt',
+              'jet_lep1_pt', 'jet_lep1_dr']
 
 if int(lep) < 2:
-  for tmp in ['lepton2_pt', 'lep1_lep2_dr']:
+  for tmp in ['lepton2_pt', 'lep1_lep2_dr', 'lepb1_pt_sum']:
     float_vars.remove(tmp)
-if int(bjet) < 1: float_vars.remove('lep1_b1_dr')
+if int(bjet) < 1: 
+  for tmp in ['lep1_b1_dr', 'lep1b1_pt_sum', 'lep1b1_sum_pt', 'lepb1_pt_sum']:
+    if tmp in float_vars: float_vars.remove(tmp)
 if int(taujet) < 2:
   for tmp in ['tau2_pt', 'tau1tau2_pt', 'tau1_tau2_dr',]: float_vars.remove(tmp)
   if int(taujet) < 1:
-    for tmp2 in ['tau1_pt',  'lep1tau1_pt',   'tau1_lep1_dr', 'tau1_met_dphi', 'tau1lep1_met_dphi']:
+    for tmp2 in ['tau1_pt',  'lep1tau1_pt',   'tau1_lep1_dr', 'tau1_met_dphi', 'tau1lep1_met_dphi', 'tau1_lep1_dphi']:
       float_vars.remove(tmp2)
 
 
@@ -103,14 +117,16 @@ for fName in bkg_files:
     fileWeight = 1
     '''
     if   'DY012Jets' in fName: fileWeight = 0.287 #54047/118284
-    elif 'TT012Jets' in fName: fileWeight = 0.021 #2536/118284
+    '''
+    if 'TT012Jets' in fName: fileWeight = 0.021 #2536/118284
     elif 'W0Jets'    in fName: fileWeight = 1.0
     elif 'W1Jets'    in fName: fileWeight = 0.662 #78271/118284
     elif 'W2Jets'    in fName: fileWeight = 0.413 #48799/118284
+    '''
     elif 'WW'        in fName: fileWeight = 0.006 #712/118284
     elif 'WZ'        in fName: fileWeight = 0.002 #283/118284
     elif 'ZZ'        in fName: fileWeight = 0.001 #99/118284
-		'''
+    '''
     f = TFile(rootDir+fName)
     t = f.Get("tree")
     loader.AddBackgroundTree(t, fileWeight)
@@ -118,7 +134,7 @@ for fName in bkg_files:
 
 loader.PrepareTrainingAndTestTree(sigCut, bkgCut, options)
 
-factory.BookMethod(loader, TMVA.Types.kBDT, "BDT", "!H:!V:NTrees=100:MinNodeSize=5%:MaxDepth=3:BoostType=Grad:Shrinkage=0.5:SeparationType=GiniIndex:nCuts=20")
+factory.BookMethod(loader, TMVA.Types.kBDT, "BDT", "!H:!V:NTrees=200:MinNodeSize=5%:MaxDepth=5:BoostType=Grad:Shrinkage=0.5:SeparationType=GiniIndex:nCuts=30")
 
 factory.TrainAllMethods()
 factory.TestAllMethods()

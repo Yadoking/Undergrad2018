@@ -14,6 +14,7 @@ python create_input_file_list.py
 source compile.sh #compile analyzer
 cat file_list.txt | xargs -i -P$(nproc) -n2 python launchAna.py
 source job_merge.sh
+python allPlots.py
 ```
 
 MVA

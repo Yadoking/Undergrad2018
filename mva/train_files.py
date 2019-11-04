@@ -17,6 +17,10 @@ def train_files(ch):
 		bkg.append('hist_TT012Jets_00' + str(i) + '.root')
 	for i in range(10, 51):
 		bkg.append('hist_TT012Jets_0' + str(i) + '.root')
-
+  '''
+  for i in range(3):
+    for j in range(1, 9):
+      bkg.append('hist_W' + str(i) + 'JetsToLNu_00' + str(j) + '.root')
+  '''
 
 	return sig, bkg
