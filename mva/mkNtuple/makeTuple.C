@@ -24,11 +24,11 @@ void makeTuple::Loop(const std::string outFileName)
   float b_tau1tau2_pt, b_tau1_tau2_dr, b_lep1_lep2_dr, b_tau1_lep1_dr;
   float b_lep1_met_dphi, b_tau1_met_dphi, b_tau1lep1_met_dphi;
   float b_lep1_b1_dr, b_lep1_c1_dr;
-	float b_tau1_lep1_dphi;
-	float b_lep1b1_sum_pt, b_lep1b1_pt_sum;
-	float b_lep12b1_pt_sum;
-	float b_jet_pt_sum, b_jet_sum_pt;
-	float b_jet_lep1_pt, b_jet_lep1_dr;
+  float b_tau1_lep1_dphi;
+  float b_lep1b1_sum_pt, b_lep1b1_pt_sum;
+  float b_lep12b1_pt_sum;
+  float b_jet_pt_sum, b_jet_sum_pt;
+  float b_jet_lep1_pt, b_jet_lep1_dr;
 
   tree->Branch("njet", &b_njet, "njet/F");
   tree->Branch("nbjet", &b_nbjet, "nbjet/F");
@@ -69,14 +69,14 @@ void makeTuple::Loop(const std::string outFileName)
   tree->Branch("tau1lep1_met_dphi", &b_tau1lep1_met_dphi, "tau1lep1_met_dphi/F");
   tree->Branch("lep1_b1_dr", &b_lep1_b1_dr, "lep1_b1_dr/F");
 
-	tree->Branch("tau1_lep1_dphi", &b_tau1_lep1_dphi, "tau1_lep1_dphi/F");
-	tree->Branch("lep1b1_pt_sum", &b_lep1b1_pt_sum, "lep1b1_pt_sum/F");
-	tree->Branch("lep1b1_sum_pt", &b_lep1b1_sum_pt, "lep1b1_sum_pt/F");
-	tree->Branch("lepb1_pt_sum", &b_lep12b1_pt_sum, "lepb1_pt_sum/F");
-	tree->Branch("jet_pt_sum", &b_jet_pt_sum, "jet_pt_sum/F");
-	tree->Branch("jet_sum_pt", &b_jet_sum_pt, "jet_sum_pt/F");
-	tree->Branch("jet_lep1_pt", &b_jet_lep1_pt, "jet_lep1_pt/F");
-	tree->Branch("jet_lep1_dr", &b_jet_lep1_dr, "jet_lep1_dr/F");
+  tree->Branch("tau1_lep1_dphi", &b_tau1_lep1_dphi, "tau1_lep1_dphi/F");
+  tree->Branch("lep1b1_pt_sum", &b_lep1b1_pt_sum, "lep1b1_pt_sum/F");
+  tree->Branch("lep1b1_sum_pt", &b_lep1b1_sum_pt, "lep1b1_sum_pt/F");
+  tree->Branch("lepb1_pt_sum", &b_lep12b1_pt_sum, "lepb1_pt_sum/F");
+  tree->Branch("jet_pt_sum", &b_jet_pt_sum, "jet_pt_sum/F");
+  tree->Branch("jet_sum_pt", &b_jet_sum_pt, "jet_sum_pt/F");
+  tree->Branch("jet_lep1_pt", &b_jet_lep1_pt, "jet_lep1_pt/F");
+  tree->Branch("jet_lep1_dr", &b_jet_lep1_dr, "jet_lep1_dr/F");
   //tree->Branch("lep1_c1_dr", &b_lep1_c1_dr, "lep1_c1_dr/F");
   //tree->Branch("", &b_, "/F");
 
@@ -158,7 +158,7 @@ void makeTuple::Loop(const std::string outFileName)
     
     //Jet
     std::vector<int> tauIdx, bIdx, cIdx, jetIdx;
-		std::vector<TLorentzVector> jet_array;
+    std::vector<TLorentzVector> jet_array;
     TLorentzVector jet;
 
     b_njet = b_nbjet = b_ncjet = b_ntaujet = 0;
@@ -167,7 +167,7 @@ void makeTuple::Loop(const std::string outFileName)
     for(int i=0; i<nJet; i++){
       if(Jet_pt[i] > 30 && abs(Jet_eta[i]) < 2.4){
         jet.SetPtEtaPhiM(Jet_pt[i], Jet_eta[i], Jet_phi[i], Jet_m[i]);
-				jet_array.push_back(jet);
+        jet_array.push_back(jet);
         b_njet++;
         b_jet_ht += Jet_pt[i];
         jetIdx.push_back(i);
@@ -212,7 +212,7 @@ void makeTuple::Loop(const std::string outFileName)
     b_tau1_tau2_dr = tauJet[0].DeltaR(tauJet[1]);
     b_tau1_met_dphi = tauJet[0].DeltaPhi(met);
     b_tau1lep1_met_dphi = (tauJet[0] + lepton[GoodLepIdx[0]]).DeltaPhi(met);
-		b_tau1_lep1_dphi = tauJet[0].DeltaPhi(lepton[GoodLepIdx[0]]);
+    b_tau1_lep1_dphi = tauJet[0].DeltaPhi(lepton[GoodLepIdx[0]]);
 
     //b jet
     TLorentzVector bJet[2];
@@ -230,16 +230,16 @@ void makeTuple::Loop(const std::string outFileName)
     for(unsigned int i = 2; i < jet_array.size(); i++){
       float jet_pt_sum = 0, jet_sum_pt = 0;
       for(unsigned int j = 1; j < i; j++){
-				for(unsigned int k = 0; k < j; k++){
-					jet_pt_sum += jet_array[i].Pt() + jet_array[j].Pt() + jet_array[k].Pt();
-					jet_sum_pt += (jet_array[i] + jet_array[j] + jet_array[k]).Pt();
-					if(jet_pt_sum_max < jet_pt_sum) jet_pt_sum_max = jet_pt_sum;
-					if(jet_sum_pt_max < jet_sum_pt){
-						jet_sum_pt_max = jet_sum_pt;
-						jet_temp = jet_array[i] + jet_array[j] + jet_array[k];
-					}
-				}
-			}
+        for(unsigned int k = 0; k < j; k++){
+          jet_pt_sum += jet_array[i].Pt() + jet_array[j].Pt() + jet_array[k].Pt();
+          jet_sum_pt += (jet_array[i] + jet_array[j] + jet_array[k]).Pt();
+          if(jet_pt_sum_max < jet_pt_sum) jet_pt_sum_max = jet_pt_sum;
+          if(jet_sum_pt_max < jet_sum_pt){
+            jet_sum_pt_max = jet_sum_pt;
+            jet_temp = jet_array[i] + jet_array[j] + jet_array[k];
+          }
+        }
+      }
 		}
 		b_jet_pt_sum = jet_pt_sum_max;
 		b_jet_sum_pt = jet_sum_pt_max;
@@ -248,9 +248,9 @@ void makeTuple::Loop(const std::string outFileName)
 
     //Even n b jet = 0, bJet[i] should be initialized by (0,0,0,0)
     b_lep1_b1_dr = bJet[0].DeltaR(lepton[GoodLepIdx[0]]);
-		b_lep1b1_sum_pt = (bJet[0] + lepton[GoodLepIdx[0]]).Pt();
-		b_lep1b1_pt_sum = bJet[0].Pt() + lepton[GoodLepIdx[0]].Pt();
-		if(GoodLepIdx.size() > 1) b_lep12b1_pt_sum = b_lep1b1_pt_sum + lepton[GoodLepIdx[1]].Pt();
+    b_lep1b1_sum_pt = (bJet[0] + lepton[GoodLepIdx[0]]).Pt();
+    b_lep1b1_pt_sum = bJet[0].Pt() + lepton[GoodLepIdx[0]].Pt();
+    if(GoodLepIdx.size() > 1) b_lep12b1_pt_sum = b_lep1b1_pt_sum + lepton[GoodLepIdx[1]].Pt();
 
     tree->Fill();
   }
